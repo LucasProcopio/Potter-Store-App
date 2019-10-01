@@ -19,8 +19,8 @@ export const Logo = styled.Image.attrs({
   source: logo,
   resizeMode: 'cover',
 })`
-  width: 185px;
-  height: 24px;
+  width: 95px;
+  height: 30px;
 `;
 
 export const BasketWrapper = styled.TouchableOpacity`
