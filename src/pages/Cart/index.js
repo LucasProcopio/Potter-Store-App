@@ -18,6 +18,8 @@ import {
   ProductAmount,
   AmoutWrapper,
   ProductTotalPrice,
+  IncreaseBtn,
+  DecreaseBtn,
 } from './styles';
 
 class Cart extends React.Component {
@@ -55,22 +57,26 @@ class Cart extends React.Component {
             />
           </ProductData>
           <RemoveBtn onPress={() => this.handleRemoveItem(item.id)}>
-            <Icon name="delete-forever" color={colors.primary} size={20} />
+            <Icon name="delete-forever" color={colors.primary} size={24} />
           </RemoveBtn>
         </Product>
         <PriceWrapper>
           <AmoutWrapper>
-            <IconCom
-              name="plus-circle-outline"
-              color={colors.primary}
-              size={20}
-            />
-            <ProductAmount editable={false} value={0} multiline={false} />
-            <IconCom
-              name="minus-circle-outline"
-              color={colors.primary}
-              size={20}
-            />
+            <IncreaseBtn>
+              <IconCom
+                name="minus-circle-outline"
+                color={colors.primary}
+                size={20}
+              />
+            </IncreaseBtn>
+            <ProductAmount editable={false} value="1" multiline={false} />
+            <DecreaseBtn>
+              <IconCom
+                name="plus-circle-outline"
+                color={colors.primary}
+                size={20}
+              />
+            </DecreaseBtn>
           </AmoutWrapper>
           <NumberFormat
             value={item.price}
