@@ -7,21 +7,21 @@ import Main from './pages/Main';
 import Cart from './pages/Cart';
 import colors from './styles/colors';
 
-const Routes = createAppContainer(
-  createStackNavigator(
-    {
-      Main,
-      Cart,
+const AppNavigator = createStackNavigator(
+  {
+    Products: Main,
+    Cart,
+  },
+  {
+    initialRouteName: 'Products',
+    defaultNavigationOptions: navOptions => ({
+      header: <Header navigation={navOptions.navigation} />,
+    }),
+    cardStyle: {
+      backgroundColor: colors.dark,
     },
-    {
-      defaultNavigationOptions: navigation => ({
-        header: <Header {...navigation} />,
-      }),
-      cardStyle: {
-        backgroundColor: colors.dark,
-      },
-    }
-  )
+  }
 );
+const Routes = createAppContainer(AppNavigator);
 
 export default Routes;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import NumberFormat from 'react-number-format';
 import api from '../../services/api';
 // import { formatPrice } from '../../util/format';
-
 import {
   Container,
   AddButton,
@@ -45,12 +45,17 @@ class Main extends React.Component {
   handleAddProduct = () => {};
 
   renderProduct = item => {
-    console.tron.log(item.image);
     return (
       <Product key={item.id}>
         <ProductImage source={{ uri: item.image }} />
         <ProductTitle>{item.title}</ProductTitle>
-        <ProductPrice>{item.price}</ProductPrice>
+        <NumberFormat
+          value={item.price}
+          thousandSeparator
+          prefix="$"
+          displayType="text"
+          renderText={value => <ProductPrice>{value}</ProductPrice>}
+        />
         <AddButton onPress={() => this.handleAddProduct(item.id)}>
           <ProductAmount>
             <AmountWrapper>
