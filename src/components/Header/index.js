@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
 import { SafeArea, Container, Logo, BasketWrapper, ItemCount } from './styles';
@@ -23,3 +23,9 @@ export default function Header({ navigation }) {
     </SafeArea>
   );
 }
+
+Header.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};

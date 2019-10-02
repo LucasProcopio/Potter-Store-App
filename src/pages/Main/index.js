@@ -3,7 +3,7 @@ import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NumberFormat from 'react-number-format';
 import api from '../../services/api';
-// import { formatPrice } from '../../util/format';
+
 import {
   Container,
   AddButton,
@@ -31,15 +31,7 @@ class Main extends React.Component {
 
   getProducts = async () => {
     const response = await api.get('/products');
-
-    const data = response.data.map(product => {
-      return {
-        ...product,
-        formattedPrice: product.price,
-      };
-    });
-    console.tron.log(data);
-    this.setState({ products: data });
+    this.setState({ products: response.data });
   };
 
   handleAddProduct = () => {};
