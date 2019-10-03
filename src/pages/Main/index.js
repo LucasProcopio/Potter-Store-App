@@ -2,7 +2,11 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NumberFormat from 'react-number-format';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import api from '../../services/api';
+
+import * as cartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -34,9 +38,14 @@ class Main extends React.Component {
     this.setState({ products: response.data });
   };
 
-  handleAddProduct = () => {};
+  handleAddProduct = id => {
+    const { addToCartRequest } = this.props;
+    addToCartRequest(id);
+  };
 
   renderProduct = item => {
+    const { amount } = this.props;
+
     return (
       <Product key={item.id}>
         <ProductImage source={{ uri: item.image }} />
@@ -52,7 +61,7 @@ class Main extends React.Component {
           <ProductAmount>
             <AmountWrapper>
               <Icon name="add-shopping-cart" color="#FFF" size={20} />
-              <ProductAmountText>0</ProductAmountText>
+              <ProductAmountText>{amount[item.id] || 0}</ProductAmountText>
             </AmountWrapper>
             <AddButtonText>ADD PRODUCT</AddButtonText>
           </ProductAmount>
@@ -76,4 +85,19 @@ class Main extends React.Component {
   }
 }
 
-export default Main;
+const mapStateToProps = state => {
+  return {
+    amount: state.cartReducer.reduce((amount, prod) => {
+      amount[prod.id] = prod.amount;
+      return amount;
+    }, {}),
+  };
+};
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(cartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Main);

@@ -1,10 +1,13 @@
 import React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import NumberFormat from 'react-number-format';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconCom from 'react-native-vector-icons/MaterialCommunityIcons';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import colors from '../../styles/colors';
-import api from '../../services/api';
+import * as cartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -20,26 +23,33 @@ import {
   ProductTotalPrice,
   IncreaseBtn,
   DecreaseBtn,
+  EmptyCart,
+  NoItems,
+  TotalContainer,
+  TotalText,
+  TotalAmount,
+  Order,
+  OrderText,
 } from './styles';
 
 class Cart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      products: [],
-    };
-  }
-
-  componentDidMount() {
-    this.getProducts();
-  }
-
-  getProducts = async () => {
-    const response = await api.get('/products');
-    this.setState({ products: response.data });
+  handleRemoveItem = id => {
+    const { removeFromCart } = this.props;
+    removeFromCart(id);
   };
 
-  handleRemoveItem = () => {};
+  decrement = prod => {
+    const { updateAmountRequest } = this.props;
+    if (prod.amount < 2) {
+      return;
+    }
+    updateAmountRequest(prod.id, prod.amount - 1);
+  };
+
+  increment = prod => {
+    const { updateAmountRequest } = this.props;
+    updateAmountRequest(prod.id, prod.amount + 1);
+  };
 
   renderProduct = item => {
     return (
@@ -51,6 +61,8 @@ class Cart extends React.Component {
             <NumberFormat
               value={item.price}
               thousandSeparator
+              decimalScale={2}
+              fixedDecimalScale
               prefix="$"
               displayType="text"
               renderText={value => <ProductPrice>{value}</ProductPrice>}
@@ -62,25 +74,30 @@ class Cart extends React.Component {
         </Product>
         <PriceWrapper>
           <AmoutWrapper>
-            <IncreaseBtn>
+            <DecreaseBtn onPress={() => this.decrement(item)}>
               <IconCom
                 name="minus-circle-outline"
                 color={colors.primary}
                 size={20}
               />
-            </IncreaseBtn>
-            <ProductAmount editable={false} value="1" multiline={false} />
-            <DecreaseBtn>
+            </DecreaseBtn>
+            <ProductAmount
+              editable={false}
+              value={item.amount.toString()}
+              multiline={false}
+            />
+            <IncreaseBtn onPress={() => this.increment(item)}>
               <IconCom
                 name="plus-circle-outline"
                 color={colors.primary}
                 size={20}
               />
-            </DecreaseBtn>
+            </IncreaseBtn>
           </AmoutWrapper>
           <NumberFormat
-            value={item.price}
-            thousandSeparator
+            value={item.subTotal}
+            decimalScale={2}
+            fixedDecimalScale
             prefix="$"
             displayType="text"
             renderText={value => <ProductTotalPrice>{value}</ProductTotalPrice>}
@@ -91,17 +108,80 @@ class Cart extends React.Component {
   };
 
   render() {
-    const { products } = this.state;
+    const { products, total, length } = this.props;
     return (
       <Container>
-        <FlatList
-          data={products}
-          renderItem={({ item }) => this.renderProduct(item)}
-          keyExtractor={item => item.id.toString()}
-        />
+        {length <= 0 ? (
+          <EmptyCart>
+            <Icon
+              name="remove-shopping-cart"
+              size={45}
+              color={colors.primary}
+            />
+            <NoItems>You have no items in your cart yet </NoItems>
+          </EmptyCart>
+        ) : (
+          <>
+            <FlatList
+              data={products}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => this.renderProduct(item)}
+              keyExtractor={item => item.id.toString()}
+            />
+            <TotalContainer>
+              <TotalText>TOTAL</TotalText>
+              <NumberFormat
+                value={total}
+                decimalScale={2}
+                fixedDecimalScale
+                prefix="$"
+                displayType="text"
+                renderText={value => <TotalAmount>{value}</TotalAmount>}
+              />
+              <Order onPress={() => Alert.alert('Order succssfully sent')}>
+                <OrderText>FINISH ORDER</OrderText>
+              </Order>
+            </TotalContainer>
+          </>
+        )}
       </Container>
     );
   }
 }
 
-export default Cart;
+const mapStateToProps = state => {
+  return {
+    products: state.cartReducer.map(prod => ({
+      ...prod,
+      subTotal: prod.price * prod.amount,
+    })),
+    length: state.cartReducer.length,
+    total: state.cartReducer.reduce(
+      (total, product) => total + product.price * product.amount,
+      0
+    ),
+  };
+};
+
+Cart.propTypes = {
+  removeFromCart: PropTypes.func.isRequired,
+  updateAmountRequest: PropTypes.func.isRequired,
+  total: PropTypes.number.isRequired,
+  length: PropTypes.number.isRequired,
+  products: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      image: PropTypes.string,
+      title: PropTypes.string,
+      price: PropTypes.number,
+    })
+  ).isRequired,
+};
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(cartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Cart);

@@ -6,8 +6,22 @@ export const Container = styled.View`
   border-radius: 4px;
   padding: 10px;
   margin: 0 20px;
+  /* height: ${props => (props.empty ? 'initial' : '500px')}; */
 `;
 
+export const EmptyCart = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+`;
+
+export const NoItems = styled.Text`
+  color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+`;
 export const Product = styled.View`
   flex: 1;
   flex-direction: row;
@@ -45,7 +59,7 @@ export const PriceWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background: #ccc;
+  background: #f1f1f1;
   border-radius: 4px;
   margin: 5px 0;
 `;
@@ -67,6 +81,36 @@ export const ProductAmount = styled.TextInput`
   border-radius: 4px;
   border: 1px solid ${colors.primary};
 `;
+
 export const ProductTotalPrice = styled.Text`
   font-weight: bold;
+`;
+
+export const TotalContainer = styled.View`
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+`;
+
+export const TotalText = styled.Text`
+  color: #555;
+  font-weight: bold;
+`;
+
+export const TotalAmount = styled.Text`
+  color: ${colors.primary};
+  font-size: 22px;
+  padding: 10px;
+`;
+
+export const Order = styled.TouchableOpacity`
+  border-radius: 4px;
+  padding: 10px 20px;
+  background: ${colors.primary};
+`;
+
+export const OrderText = styled.Text`
+  color: #fff;
+  text-align: center;
 `;
