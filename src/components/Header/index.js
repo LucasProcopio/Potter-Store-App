@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import { SafeArea, Container, Logo, BasketWrapper, ItemCount } from './styles';
 
-export default function Header({ navigation }) {
+function Header({ navigation, intemQt }) {
   const handleNavigate = screen => {
     navigation.navigate(screen);
   };
@@ -17,7 +18,7 @@ export default function Header({ navigation }) {
         </TouchableOpacity>
         <BasketWrapper onPress={() => handleNavigate('Cart')}>
           <Icon name="shopping-basket" color="#FFF" size={24} />
-          <ItemCount>0</ItemCount>
+          <ItemCount>{intemQt}</ItemCount>
         </BasketWrapper>
       </Container>
     </SafeArea>
@@ -29,3 +30,9 @@ Header.propTypes = {
     navigate: PropTypes.func,
   }).isRequired,
 };
+
+const mapStateToProps = state => ({
+  intemQt: state.cartReducer.length,
+});
+
+export default connect(mapStateToProps)(Header);
